@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liga FUTVE - Fase Final Clausura 2025 (Persistente)</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #fca311; /* Naranja/Amarillo brillante */
+            --secondary-color: #14213d; /* Azul marino oscuro */
+            --background-color: #1f2937; /* Gris oscuro para el fondo */
+            --text-color: #e5e7eb; /* Gris claro para el texto */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .header-bg {
+            background-color: var(--secondary-color);
+        }
+        .table-header {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            text-transform: uppercase;
+        }
+        .group-card {
+            background-color: #374151; /* Fondo ligeramente más claro para las tarjetas */
+        }
+        .match-result-card {
+            background-color: #4b5563;
+        }
+        .score-box {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+        .team-logo {
+            /* Estilo para los logotipos SVG/Placeholder */
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 8px;
+            background-color: white; /* Color de fondo base para el logo */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        .stat-button {
+            transition: background-color 0.1s;
+        }
+        .stat-button:active:not([disabled]) {
+            filter: brightness(1.2);
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(31, 41, 55, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Overlay de Carga -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary-color"></div>
+        <p class="mt-4 text-lg">Cargando datos de la Fase Final...</p>
+    </div>
+
+    <!-- Encabezado Principal -->
+    <header class="header-bg p-4 mb-8 rounded-xl shadow-2xl text-center">
+        <h1 class="text-3xl font-extrabold text-white md:text-4xl">
+            <span class="text-primary-color">LIGA FUTVE</span>
+        </h1>
+        <h2 class="text-xl font-semibold mt-1 text-gray-200">FASE FINAL CLAUSURA 2025</h2>
+        <p id="user-info" class="text-xs text-gray-400 mt-2">ID de Usuario: Cargando...</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto hidden" id="main-content">
+        
+        <!-- Sección de Tablas de Posiciones -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6 text-primary-color border-b border-primary-color pb-2">Tabla de Posiciones</h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Grupo A Card -->
+                <div id="groupA-card" class="group-card p-4 rounded-xl shadow-lg">
+                    <h4 class="text-xl font-bold mb-4 text-center text-white">GRUPO A</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm rounded-lg overflow-hidden">
+                            <thead>
+                                <tr class="table-header text-xs">
+                                    <th class="p-2 text-left">POS</th>
+                                    <th class="p-2 text-left">EQUIPO</th>
+                                    <th class="p-2 text-center">J</th>
+                                    <th class="p-2 text-center hidden sm:table-cell">G</th>
+                                    <th class="p-2 text-center hidden sm:table-cell">E</th>
+                                    <th class="p-2 text-center hidden sm:table-cell">P</th>
+                                    <th class="p-2 text-center">GF</th>
+                                    <th class="p-2 text-center">GC</th>
+                                    <th class="p-2 text-center hidden md:table-cell">+/-</th>
+                                    <th class="p-2 text-center font-extrabold">PTS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="groupA-body">
+                                <!-- Contenido de Grupo A generado por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Grupo B Card -->
+                <div id="groupB-card" class="group-card p-4 rounded-xl shadow-lg">
+                    <h4 class="text-xl font-bold mb-4 text-center text-white">GRUPO B</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm rounded-lg overflow-hidden">
+                            <thead>
+                                <tr class="table-header text-xs">
+                                    <th class="p-2 text-left">POS</th>
+                                    <th class="p-2 text-left">EQUIPO</th>
+                                    <th class="p-2 text-center">J</th>
+                                    <th class="p-2 text-center hidden sm:table-cell">G</th>
+                                    <th class="p-2 text-center hidden sm:table-cell">E</th>
+                                    <th class="p-2 text-center hidden sm:table-cell">P</th>
+                                    <th class="p-2 text-center">GF</th>
+                                    <th class="p-2 text-center">GC</th>
+                                    <th class="p-2 text-center hidden md:table-cell">+/-</th>
+                                    <th class="p-2 text-center font-extrabold">PTS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="groupB-body">
+                                <!-- Contenido de Grupo B generado por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Seguimiento Interactivo de Partidos (NUEVA FUNCIONALIDAD) -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6 text-primary-color border-b border-primary-color pb-2">Seguimiento Interactivo de Partidos (6 Jornadas)</h3>
+            <p class="text-sm text-gray-400 mb-4">Usa los botones para registrar las estadísticas de los partidos en vivo. Presiona "Finalizar Partido" para actualizar la tabla de posiciones.</p>
+            <div id="interactive-matches-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Contenido de partidos interactivos generado por JS -->
+            </div>
+        </section>
+
+
+        <!-- Sección de Últimos Resultados (Recientes) -->
+        <section>
+            <h3 class="text-2xl font-bold mb-6 text-primary-color border-b border-primary-color pb-2">Últimos Resultados</h3>
+            <div id="results-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Contenido de resultados generado por JS -->
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Módulos de Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // ------------------------------------
+        // --- INICIALIZACIÓN DE FIREBASE ---
+        // ------------------------------------
+
+        // setLogLevel('Debug'); // Útil para depuración
+
+        // Variables Globales (Disponibles en el entorno de Canvas)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'liga-futve-2025';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db;
+        let auth;
+        let userId = 'anonymous'; // Valor por defecto
+        
+        // Documentos de Firestore para almacenar el estado
+        // La referencia a un documento debe tener un número PAR de segmentos (Colección/Documento/Colección/Documento...)
+        // Hemos añadido 'global_state' como una subcolección para cumplir con esto y corregir el error.
+        const STANDINGS_DOC_PATH = `artifacts/${appId}/public/data/global_state/standings`;
+        const MATCHES_DOC_PATH = `artifacts/${appId}/public/data/global_state/matches`;
+
+        // Datos Iniciales (Solo se usan si NO hay datos en Firestore)
+        const initialStandings = {
+            groupA: [
+                { pos: 1, name: 'Monagas SC', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+                { pos: 2, name: 'La Guaira', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+                { pos: 3, name: 'Zamora FC', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+                { pos: 4, name: 'Puerto Cabello', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+            ],
+            groupB: [
+                { pos: 1, name: 'Caracas FC', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+                { pos: 2, name: 'Metropolitanos FC', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+                { pos: 3, name: 'Carabobo FC', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+                { pos: 4, name: 'Deportivo Táchira', j: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, diff: 0, pts: 0 },
+            ]
+        };
+
+        const initialMatches = [
+            // JORNADA 1
+            { id: 1, date: 'Viernes 17-10-25 (J1)', team1: 'Monagas SC', team2: 'La Guaira', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 2, date: 'Viernes 17-10-25 (J1)', team1: 'Caracas FC', team2: 'Carabobo FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 3, date: 'Sábado 18-10-25 (J1)', team1: 'Zamora FC', team2: 'Puerto Cabello', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 4, date: 'Sábado 18-10-25 (J1)', team1: 'Metropolitanos FC', team2: 'Deportivo Táchira', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            
+            // JORNADA 2
+            { id: 5, date: 'Martes 21-10-25 (J2)', team1: 'La Guaira', team2: 'Zamora FC', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 6, date: 'Martes 21-10-25 (J2)', team1: 'Carabobo FC', team2: 'Metropolitanos FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 7, date: 'Miércoles 22-10-25 (J2)', team1: 'Puerto Cabello', team2: 'Monagas SC', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 8, date: 'Miércoles 22-10-25 (J2)', team1: 'Deportivo Táchira', team2: 'Caracas FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+
+            // JORNADA 3
+            { id: 9, date: 'Sábado 25-10-25 (J3)', team1: 'Monagas SC', team2: 'La Guaira', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 10, date: 'Sábado 25-10-25 (J3)', team1: 'Puerto Cabello', team2: 'Zamora FC', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 11, date: 'Domingo 26-10-25 (J3)', team1: 'Carabobo FC', team2: 'Deportivo Táchira', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 12, date: 'Domingo 26-10-25 (J3)', team1: 'Metropolitanos FC', team2: 'Caracas FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+
+            // JORNADA 4
+            { id: 13, date: 'Martes 29-10-25 (J4)', team1: 'La Guaira', team2: 'Monagas SC', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 14, date: 'Martes 29-10-25 (J4)', team1: 'Zamora FC', team2: 'Puerto Cabello', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 15, date: 'Miércoles 30-10-25 (J4)', team1: 'Deportivo Táchira', team2: 'Carabobo FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 16, date: 'Miércoles 30-10-25 (J4)', team1: 'Caracas FC', team2: 'Metropolitanos FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            
+            // JORNADA 5
+            { id: 17, date: 'Martes 04-11-25 (J5)', team1: 'Puerto Cabello', team2: 'Monagas SC', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 18, date: 'Martes 04-11-25 (J5)', team1: 'Zamora FC', team2: 'La Guaira', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 19, date: 'Miércoles 05-11-25 (J5)', team1: 'Metropolitanos FC', team2: 'Carabobo FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 20, date: 'Miércoles 05-11-25 (J5)', team1: 'Caracas FC', team2: 'Deportivo Táchira', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            
+            // JORNADA 6
+            { id: 21, date: 'Sábado 08-11-25 (J6)', team1: 'La Guaira', team2: 'Puerto Cabello', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 22, date: 'Sábado 08-11-25 (J6)', team1: 'Monagas SC', team2: 'Zamora FC', group: 'Grupo A', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 23, date: 'Domingo 09-11-25 (J6)', team1: 'Deportivo Táchira', team2: 'Metropolitanos FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+            { id: 24, date: 'Domingo 09-11-25 (J6)', team1: 'Carabobo FC', team2: 'Caracas FC', group: 'Grupo B', score1: 0, score2: 0, corners1: 0, corners2: 0, shots1: 0, shots2: 0, status: 'LIVE' },
+        ];
+
+
+        let currentStandings = initialStandings;
+        let currentMatches = initialMatches;
+        let isAuthReady = false;
+
+        async function initFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // 1. Manejo de Autenticación
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('user-info').textContent = `ID de Usuario: ${userId.substring(0, 8)}... (Colaborativo)`;
+                    } else {
+                        userId = crypto.randomUUID(); // Usar un ID aleatorio si no hay usuario (aunque no debería pasar aquí)
+                        document.getElementById('user-info').textContent = `ID de Usuario: ${userId.substring(0, 8)}... (Anónimo)`;
+                    }
+                    isAuthReady = true;
+                    // Iniciar la escucha de datos
+                    setupFirestoreListeners();
+                });
+
+            } catch (error) {
+                console.error("Error al inicializar Firebase o la autenticación:", error);
+                document.getElementById('loading-overlay').innerHTML = `<p class="text-red-500">Error al cargar la base de datos. Intenta recargar.</p><p class="text-sm">Consola para detalles.</p>`;
+            }
+        }
+
+        // 2. Listener y Carga Inicial de Datos
+        function setupFirestoreListeners() {
+            if (!db || !isAuthReady) return;
+
+            // Listener para el estado de los Partidos
+            onSnapshot(doc(db, MATCHES_DOC_PATH), (docSnap) => {
+                if (docSnap.exists() && docSnap.data().matches) {
+                    currentMatches = docSnap.data().matches;
+                    console.log("Partidos cargados/actualizados desde Firestore.");
+                } else {
+                    // Inicializar si es la primera vez
+                    saveMatches(initialMatches); 
+                    currentMatches = initialMatches;
+                    console.log("Inicializando Partidos en Firestore.");
+                }
+                renderInteractiveMatches(); // Re-renderizar con los datos nuevos
+                checkIfReady();
+            }, (error) => {
+                console.error("Error en el listener de Partidos:", error);
+            });
+
+            // Listener para el estado de la Tabla de Posiciones
+            onSnapshot(doc(db, STANDINGS_DOC_PATH), (docSnap) => {
+                if (docSnap.exists() && docSnap.data().standings) {
+                    currentStandings = docSnap.data().standings;
+                    console.log("Tablas cargadas/actualizadas desde Firestore.");
+                } else {
+                    // Inicializar si es la primera vez
+                    saveStandings(initialStandings);
+                    currentStandings = initialStandings;
+                    console.log("Inicializando Tablas en Firestore.");
+                }
+                renderStandings(currentStandings.groupA, 'groupA-body');
+                renderStandings(currentStandings.groupB, 'groupB-body');
+                checkIfReady();
+            }, (error) => {
+                console.error("Error en el listener de Tablas:", error);
+            });
+        }
+        
+        let initialLoadDone = 0;
+        function checkIfReady() {
+            initialLoadDone++;
+            // Esperamos que se carguen tanto las tablas (1) como los partidos (2)
+            if (initialLoadDone >= 2) { 
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+            }
+        }
+
+        // 3. Funciones para Guardar Datos en Firestore
+        const saveStandings = (data) => {
+            if (!db) return;
+            // Usamos setDoc para sobrescribir todo el documento con la nueva data
+            setDoc(doc(db, STANDINGS_DOC_PATH), { standings: data, lastUpdated: new Date() })
+                .catch(e => console.error("Error al guardar standings:", e));
+        };
+
+        const saveMatches = (data) => {
+            if (!db) return;
+            // Usamos setDoc para sobrescribir todo el documento con la nueva data
+            setDoc(doc(db, MATCHES_DOC_PATH), { matches: data, lastUpdated: new Date() })
+                .catch(e => console.error("Error al guardar partidos:", e));
+        };
+        
+        // --- LÓGICA DE LA APLICACIÓN (Adaptada para usar currentMatches y Firestore) ---
+
+        // Función de utilidad para generar un logo de equipo simple (placeholder SVG)
+        window.getTeamLogo = (teamName) => { // Exportado a window
+            let color = '';
+            switch(teamName) {
+                case 'Monagas SC': color = '#e53e3e'; break; // Rojo
+                case 'La Guaira': color = '#f6ad55'; break; // Naranja
+                case 'Zamora FC': color = '#1a202c'; break; // Negro/Oscuro
+                case 'Puerto Cabello': color = '#3182ce'; break; // Azul
+                case 'Caracas FC': color = '#c53030'; break; // Rojo Fuerte
+                case 'Metropolitanos FC': color = '#6b46c1'; break; // Púrpura
+                case 'Carabobo FC': color = '#9f7aea'; break; // Violeta
+                case 'Deportivo Táchira': color = '#f6e05e'; break; // Amarillo
+                default: color = '#a0aec0'; // Gris
+            }
+            // SVG simple como placeholder
+            return `<span class="team-logo" style="background-color: ${color};"><svg class="w-full h-full text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 18v-6l-2-2m0 4l4-4"></path></svg></span>`;
+        };
+
+        // Función para ordenar la tabla (por puntos, luego por diferencia de goles, luego por goles a favor)
+        window.sortStandings = (groupData) => { // Exportado a window
+            return groupData.sort((a, b) => {
+                if (b.pts !== a.pts) return b.pts - a.pts; 
+                if (b.diff !== a.diff) return b.diff - a.diff; 
+                return b.gf - a.gf; 
+            }).map((team, index) => ({...team, pos: index + 1})); 
+        };
+
+        // Función para renderizar la tabla de posiciones
+        window.renderStandings = (groupData, containerId) => { // Exportado a window
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const sortedData = window.sortStandings(groupData);
+
+            container.innerHTML = sortedData.map(team => `
+                <tr class="border-b border-gray-600 hover:bg-gray-700 transition duration-150">
+                    <td class="p-2 font-bold">${team.pos}</td>
+                    <td class="p-2 flex items-center whitespace-nowrap">
+                        ${window.getTeamLogo(team.name)}
+                        ${team.name}
+                    </td>
+                    <td class="p-2 text-center">${team.j}</td>
+                    <td class="p-2 text-center hidden sm:table-cell">${team.g}</td>
+                    <td class="p-2 text-center hidden sm:table-cell">${team.e}</td>
+                    <td class="p-2 text-center hidden sm:table-cell">${team.p}</td>
+                    <td class="p-2 text-center">${team.gf}</td>
+                    <td class="p-2 text-center">${team.gc}</td>
+                    <td class="p-2 text-center hidden md:table-cell">${team.diff > 0 ? '+' : ''}${team.diff}</td>
+                    <td class="p-2 text-center font-extrabold text-primary-color bg-gray-800 rounded-md">${team.pts}</td>
+                </tr>
+            `).join('');
+        };
+
+        // Función para actualizar la tabla de posiciones con el resultado de un partido
+        const updateStandingsLogic = (teamName, isHome, matchData, standingsData) => {
+            const groupKey = matchData.group === 'Grupo A' ? 'groupA' : 'groupB';
+            const teamIndex = standingsData[groupKey].findIndex(team => team.name === teamName);
+            
+            if (teamIndex === -1) {
+                console.error(`Equipo no encontrado en la tabla: ${teamName}`);
+                return;
+            }
+
+            const team = standingsData[groupKey][teamIndex];
+            
+            const teamScore = isHome ? matchData.score1 : matchData.score2;
+            const opponentScore = isHome ? matchData.score2 : matchData.score1;
+
+            // Actualizar estadísticas básicas
+            team.j += 1;
+            team.gf += teamScore;
+            team.gc += opponentScore;
+
+            // Determinar resultado y puntos
+            if (teamScore > opponentScore) {
+                team.g += 1;
+                team.pts += 3; // 3 puntos por victoria
+            } else if (teamScore === opponentScore) {
+                team.e += 1;
+                team.pts += 1; // 1 punto por empate
+            } else {
+                team.p += 1;
+            }
+            
+            // Actualizar diferencia de goles
+            team.diff = team.gf - team.gc;
+        };
+
+        // Función para finalizar un partido y aplicar los puntos
+        window.finalizeMatch = (matchId) => { // Exportado a window
+            const matchIndex = currentMatches.findIndex(match => match.id === matchId);
+            const match = currentMatches[matchIndex];
+
+            if (matchIndex === -1 || match.status === 'FINISHED') {
+                return;
+            }
+            
+            // Crear una copia de los datos para actualizar sin modificar el estado actual antes de guardar
+            const newMatches = JSON.parse(JSON.stringify(currentMatches));
+            const newStandings = JSON.parse(JSON.stringify(currentStandings));
+
+            // 1. Establecer el estado como FINALIZADO en la copia
+            newMatches[matchIndex].status = 'FINISHED';
+
+            // 2. Aplicar lógica de puntos a la copia de la tabla
+            updateStandingsLogic(match.team1, true, match, newStandings);  // Equipo 1 (Local)
+            updateStandingsLogic(match.team2, false, match, newStandings); // Equipo 2 (Visitante)
+            
+            // 3. Guardar ambas copias en Firestore
+            saveMatches(newMatches);
+            saveStandings(newStandings);
+            // El listener se encargará de actualizar la UI automáticamente
+        };
+
+        // Función para actualizar una estadística específica
+        window.updateMatchStat = (matchId, stat, teamIndex) => { // Exportado a window
+            const matchIndex = currentMatches.findIndex(match => match.id === matchId);
+            const match = currentMatches[matchIndex];
+            
+            if (matchIndex === -1 || match.status === 'FINISHED') return;
+
+            // Crear una copia del array de partidos para actualizar
+            const newMatches = JSON.parse(JSON.stringify(currentMatches));
+
+            // Construye el nombre de la propiedad (e.g., 'score1', 'corners2')
+            const statKey = `${stat}${teamIndex}`; 
+            
+            // Incrementa el valor en la copia
+            newMatches[matchIndex][statKey] = (newMatches[matchIndex][statKey] || 0) + 1;
+            
+            // Guarda la copia en Firestore
+            saveMatches(newMatches);
+            // El listener se encargará de actualizar la UI automáticamente
+        };
+        
+        // Función para renderizar los partidos interactivos
+        window.renderInteractiveMatches = () => { // Exportado a window
+            const container = document.getElementById('interactive-matches-container');
+            if (!container) return;
+
+            // Agrupar partidos por jornada/fecha
+            const matchesByDate = currentMatches.reduce((acc, match) => {
+                const dateKey = match.date;
+                if (!acc[dateKey]) {
+                    acc[dateKey] = [];
+                }
+                acc[dateKey].push(match);
+                return acc;
+            }, {});
+
+            let htmlContent = '';
+
+            for (const date in matchesByDate) {
+                htmlContent += `<div class="lg:col-span-2 mt-4"><h4 class="text-xl font-bold text-gray-300 mb-3">${date.split('(')[0]} - ${date.split('(')[1].replace(')', '')}</h4></div>`;
+                
+                matchesByDate[date].forEach(match => {
+                    const team1Name = match.team1.replace(' FC', '').replace(' SC', '');
+                    const team2Name = match.team2.replace(' Deportivo', '').replace(' FC', '').replace(' SC', '');
+                    const isFinished = match.status === 'FINISHED';
+                    const buttonDisabled = isFinished ? 'disabled' : '';
+
+                    // Helper para generar una fila de estadísticas con botones
+                    const createStatRow = (stat, label, icon) => `
+                        <div class="flex items-center justify-between text-sm py-1 border-t border-gray-600">
+                            <div class="flex items-center w-1/3 text-left">
+                                <button ${buttonDisabled} onclick="updateMatchStat(${match.id}, '${stat}', 1)" 
+                                    class="stat-button ${isFinished ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 'bg-gray-700 hover:bg-primary-color text-white hover:text-secondary-color'} p-1 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition duration-150">+</button>
+                                <span class="ml-2 font-bold">${match[`${stat}1`]}</span>
+                            </div>
+                            <span class="text-xs font-medium text-gray-400 flex items-center w-1/3 justify-center">
+                                ${icon} ${label}
+                            </span>
+                            <div class="flex items-center w-1/3 text-right justify-end">
+                                <span class="mr-2 font-bold">${match[`${stat}2`]}</span>
+                                <button ${buttonDisabled} onclick="updateMatchStat(${match.id}, '${stat}', 2)" 
+                                    class="stat-button ${isFinished ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 'bg-gray-700 hover:bg-primary-color text-white hover:text-secondary-color'} p-1 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition duration-150">+</button>
+                            </div>
+                        </div>
+                    `;
+
+                    htmlContent += `
+                        <div class="group-card p-4 rounded-xl shadow-2xl border-t-4 border-primary-color" id="match-${match.id}">
+                            <p class="text-xs font-semibold text-primary-color mb-2">${match.group}</p>
+                            
+                            <!-- Marcador Principal -->
+                            <div class="flex items-center justify-between mb-4">
+                                <!-- Equipo 1 -->
+                                <div class="flex flex-col items-center w-1/3 text-center">
+                                    ${window.getTeamLogo(match.team1)}
+                                    <span class="text-base font-semibold mt-1">${team1Name}</span>
+                                </div>
+                                
+                                <!-- Score Box -->
+                                <div class="flex items-center space-x-3 w-1/3 justify-center">
+                                    <span class="score-box px-4 py-2 rounded-lg text-2xl font-extrabold">${match.score1}</span>
+                                    <span class="text-gray-300 text-xl font-bold">-</span>
+                                    <span class="score-box px-4 py-2 rounded-lg text-2xl font-extrabold">${match.score2}</span>
+                                </div>
+
+                                <!-- Equipo 2 -->
+                                <div class="flex flex-col items-center w-1/3 text-center">
+                                    ${window.getTeamLogo(match.team2)}
+                                    <span class="text-base font-semibold mt-1">${team2Name}</span>
+                                </div>
+                            </div>
+
+                            <!-- Panel de Estadísticas Interactivas -->
+                            <div class="bg-gray-700 p-3 rounded-lg">
+                                <p class="text-xs font-bold text-center text-primary-color mb-2">Añadir Estadísticas</p>
+                                
+                                <!-- Goles (Score) -->
+                                ${createStatRow('score', 'Goles', '⚽')}
+                                
+                                <!-- Tiros a Portería (Shots on Goal) -->
+                                ${createStatRow('shots', 'Tiros a Portería', '🥅')}
+
+                                <!-- Tiros de Esquina (Corners) -->
+                                ${createStatRow('corners', 'Tiros de Esquina', '🚩')}
+                            </div>
+
+                            <!-- Botón Finalizar / Estado -->
+                            <div class="mt-4 pt-3 border-t border-gray-600">
+                                ${isFinished 
+                                    ? `<div class="text-center bg-green-600 text-white font-bold py-2 rounded-lg text-sm shadow-inner">✅ PARTIDO FINALIZADO</div>`
+                                    : `<button onclick="finalizeMatch(${match.id})" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg text-sm shadow-md transition duration-150">
+                                        FINALIZAR PARTIDO
+                                    </button>`
+                                }
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = htmlContent;
+        };
+
+
+        // 4. Datos de Últimos Resultados (Recientes del PPTX) - No modificados
+        const recentResults = [
+            { date: '14/09/2025', team1: 'Carabobo FC', score1: 1, team2: 'Caracas FC', score2: 0 },
+            { date: '13/09/2025', team1: 'Puerto Cabello', score1: 1, team2: 'Deportivo La Guaira', score2: 0 },
+            { date: '24/08/2025', team1: 'Metropolitanos FC', score1: 2, team2: 'Deportivo Táchira', score2: 3 },
+            { date: '23/08/2025', team1: 'Zamora FC', score1: 2, team2: 'Monagas SC', score2: 3 },
+        ];
+
+        // Función para renderizar los resultados (No modificada)
+        window.renderResults = () => { // Exportado a window
+            const container = document.getElementById('results-container');
+            if (!container) return;
+
+            container.innerHTML = recentResults.map(result => `
+                <div class="match-result-card p-4 rounded-xl shadow-md flex flex-col justify-between">
+                    <p class="text-xs text-gray-400 mb-2">${result.date} | Liga FUTVE}</p>
+                    <div class="flex items-center justify-between text-base font-semibold">
+                        <!-- Equipo 1 -->
+                        <div class="flex flex-col items-center w-1/3 text-center">
+                            ${window.getTeamLogo(result.team1)}
+                            <span class="mt-1">${result.team1.replace(' FC', '').replace(' SC', '')}</span>
+                        </div>
+                        
+                        <!-- Marcador -->
+                        <div class="flex items-center space-x-2 w-1/3 justify-center">
+                            <span class="score-box px-3 py-1 rounded-md text-lg font-extrabold">${result.score1}</span>
+                            <span class="text-gray-300">-</span>
+                            <span class="score-box px-3 py-1 rounded-md text-lg font-extrabold">${result.score2}</span>
+                        </div>
+
+                        <!-- Equipo 2 -->
+                        <div class="flex flex-col items-center w-1/3 text-center">
+                            ${window.getTeamLogo(result.team2)}
+                            <span class="mt-1">${result.team2.replace(' Deportivo', '').replace(' FC', '').replace(' SC', '')}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+
+        // Inicializar la aplicación
+        window.onload = () => {
+            initFirebase();
+            window.renderResults();
+            // renderStandings y renderInteractiveMatches se llaman dentro del listener de Firestore
+        };
+
+    </script>
+
+</body>
+</html>
